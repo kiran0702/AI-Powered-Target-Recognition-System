@@ -1,92 +1,110 @@
-# AI-Powered Target Recognition System
+<div align="center">
 
-## 📝 Project Description
-The **AI-Powered Target Recognition System** is a real-time object and weapon detection application. Built with Python, it utilizes the YOLO (You Only Look Once) deep learning model through the Ultralytics library to detect objects in live video streams. The system is designed to provide high-performance computer vision capabilities, featuring a graphical user interface (GUI) for easy interaction, multiple camera support, pseudo-thermal imaging, and automated incident logging into a SQLite database. 
+# 🎯 AI-Powered Target Recognition System
 
-It is specifically tailored to identify potential threats (like knives and guns), highlight them, and securely log the detection events for security and surveillance purposes.
+**A high-performance, real-time object and weapon detection application designed for security and surveillance.**
 
----
+[![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.x-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org/)
+[![YOLO](https://img.shields.io/badge/YOLO-v5%2Fv8-00FFFF?style=for-the-badge&logo=ultralytics&logoColor=black)](https://ultralytics.com/)
+[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)
 
-## 🏗️ Workflow & Architecture
-
-The application is structured to handle video processing and UI rendering concurrently to maintain a smooth user experience.
-
-1. **User Interface (UI) Layer**: Built using Tkinter, it provides the main dashboard. It displays the live video feed, real-time statistics (FPS, total detections, weapon detections, average confidence), and controls (Threshold slider, Camera switch, Thermal mode toggle, Recording).
-2. **Video Capture & Processing**: OpenCV captures frames from either the local webcam or an IP camera. The frames are placed into a thread-safe queue.
-3. **AI Inference Engine (YOLO)**: A background worker thread consumes frames from the queue, resizes them, and passes them to the YOLO model (running on CUDA/GPU if available) for object detection.
-4. **Threat Detection & Highlighting**: Bounding boxes are drawn around detected objects. If a weapon (e.g., "gun", "knife") is detected, the bounding box is colored red and a warning is logged.
-5. **Data Persistence**: When an object is detected, relevant metadata (timestamp, camera index, object class, confidence score, weapon flag) is saved into a local SQLite database (`detections.db`).
-6. **Video Recording & Effects**: The system can apply a pseudo-thermal (JET colormap) effect to the video stream and optionally record the processed output to an `.avi` file in the `output/` directory.
+</div>
 
 ---
 
-## 🛠️ Technology Stack
+## 📖 Overview
 
-- **Programming Language**: Python 3
-- **Computer Vision**: OpenCV (`opencv-python`)
-- **Deep Learning Model**: Ultralytics YOLOv5 / YOLOv8
-- **GUI Framework**: Tkinter & `ttk`
-- **Image Processing**: Pillow (PIL)
-- **Database**: SQLite3 (built-in Python library)
-- **Numerical Computing**: NumPy
+The **AI-Powered Target Recognition System** leverages state-of-the-art computer vision to detect objects and potential threats in live video streams. Utilizing the YOLO (You Only Look Once) deep learning model via Ultralytics, it provides lightning-fast inference on both local and IP cameras.
+
+Designed with security in mind, the system automatically highlights dangerous objects (like knives and guns) and permanently logs these incidents into a local SQLite database. It features a responsive graphical user interface (GUI) built with Tkinter, enabling operators to seamlessly switch cameras, apply pseudo-thermal imaging, adjust detection confidence thresholds, and record video evidence.
 
 ---
 
-## 🚀 Features
+## ✨ Key Features
 
-- **Real-time Object Detection**: Uses state-of-the-art YOLO models for fast and accurate inference.
-- **Weapon Identification**: Specifically highlights weapons and logs them securely.
-- **Multi-Camera Support**: Seamlessly switch between built-in webcams and network IP cameras.
-- **Pseudo-Thermal Mode**: Applies a thermal-like colormap for different viewing perspectives.
-- **Video Recording**: Record and save the processed video feed with bounding boxes.
-- **Interactive UI**: Adjust detection confidence thresholds on the fly and monitor FPS and detection statistics.
-- **SQLite Logging**: Keeps a persistent record of all detections with timestamps and confidence scores.
+- 🕵️ **Real-Time Threat Detection**: Identifies objects rapidly and highlights weapons (guns, knives) with specialized red bounding boxes.
+- 📹 **Multi-Camera Support**: Seamlessly toggle between local webcams and external IP camera streams.
+- 🌡️ **Pseudo-Thermal Imaging**: Apply a thermal-like JET colormap to the video stream for enhanced visibility in certain conditions.
+- 💾 **Automated Logging**: Persists critical detection data (timestamps, object class, confidence score) into an SQLite database (`detections.db`).
+- 📼 **Evidence Recording**: Easily record the processed live feed (with bounding boxes) and save it directly to your machine.
+- 🎛️ **Interactive Dashboard**: Adjust the confidence threshold on the fly, and view live statistics such as FPS, total detections, and weapon counts.
 
 ---
 
-## ⚙️ Installation & Setup
+## 🏗️ Architecture & Workflow
 
-1. **Clone the repository**:
+1. **Input Layer**: `cv2.VideoCapture` captures frames from the selected camera feed.
+2. **Background Processing**: A dedicated Python daemon thread ingests frames into a thread-safe queue, preventing UI freezing.
+3. **AI Engine**: Ultralytics YOLO models process the resized frames, leveraging CUDA/GPU acceleration when available.
+4. **Analysis & Storage**: The system parses the bounding boxes and confidence scores. Threats are flagged, painted red, and written to SQLite.
+5. **Presentation**: The processed frames are converted back via PIL and rendered on the Tkinter canvas, alongside real-time analytical metrics.
+
+---
+
+## 💻 Tech Stack
+
+- **Frontend / GUI**: Tkinter, `ttk`
+- **Computer Vision**: OpenCV (`opencv-python`), Pillow (PIL)
+- **AI / Deep Learning**: Ultralytics (YOLOv5, YOLOv8)
+- **Data Persistence**: SQLite3
+- **Data Processing**: NumPy
+
+---
+
+## 🚀 Getting Started
+
+Follow these instructions to set up the project locally.
+
+### Prerequisites
+
+- Python 3.8 or higher installed on your system.
+- (Optional but recommended) A CUDA-enabled NVIDIA GPU for accelerated AI inference.
+
+### Installation
+
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/yourusername/AI-Powered-Target-Recognition-System.git
    cd AI-Powered-Target-Recognition-System
    ```
 
-2. **Install dependencies**:
-   Make sure you have Python 3.8+ installed. Run the following command to install required packages:
+2. **Install the required dependencies:**
    ```bash
    pip install -r Requirement.txt
    ```
 
-3. **Download YOLO Models**:
-   Ensure you have a YOLO model (e.g., `yolov5x6u.pt` or `yolov8n.pt`) placed inside the `models/` directory.
+3. **Configure the YOLO Models:**
+   Ensure your YOLO weights (e.g., `yolov5x6u.pt` or `yolov8n.pt`) are placed securely in the `models/` directory.
 
-4. **Run the Application**:
-   ```bash
-   python scripts/target_recognition.py
-   ```
+### Running the Application
+
+Execute the main script to launch the dashboard:
+
+```bash
+python scripts/target_recognition.py
+```
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-AI-Powered-Target-Recognition-System/
-├── scripts/
-│   └── target_recognition.py   # Main application script
-├── models/
-│   ├── yolov8n.pt              # YOLOv8 Nano model weights
-│   └── yolo11l.pt              # YOLO11 Large model weights
-├── Documentations/             # Additional project docs
-├── output/                     # Saved video recordings (auto-generated)
-├── Requirement.txt             # Python dependencies
-├── detections.db               # SQLite database (auto-generated)
-├── error.log                   # System error logs
-└── README.md                   # Project documentation
+📦 AI-Powered-Target-Recognition-System
+├── 📁 scripts/
+│   └── 📄 target_recognition.py   # Main application and GUI logic
+├── 📁 models/
+│   ├── 📄 yolov8n.pt              # YOLOv8 Nano model weights
+│   └── 📄 yolo11l.pt              # YOLO11 Large model weights
+├── 📁 output/                     # Auto-generated video recordings (.avi)
+├── 📄 Requirement.txt             # Project dependencies
+├── 📄 detections.db               # SQLite log database (auto-generated)
+├── 📄 error.log                   # Runtime error logging
+└── 📄 README.md                   # Project documentation
 ```
 
 ---
 
 ## 🛡️ License
 
-This project is open-source and available under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
